@@ -1,5 +1,5 @@
 import numpy as np
-
+import scipy.optimize as opt
 
 def i_d(x: float, d: int) -> float:
     '''
@@ -27,15 +27,23 @@ class Handler(object):
     def i(self, x: float) -> float:
         return i_d(x, self.d)/self.i_max
 
+    def i_prime(self, x: float) -> float:
+        return np.sin(x)**self.d/self.i_max
+
     @np.vectorize
     def get_theta(self, h: float) -> float:
         if h <= 0:
             return 0.
         if h >= 1:
             return np.pi
+        if h == 0.5:
+            return np.pi/2
 
-        guess = np.pi/2
-        jump = np.pi/2
+        if h > 0.5:
+            return np.pi - self.get_theta(1 - h)
+
+        return opt.fsolve(lambda x: self.i(x) - h, x0=np.pi/2,
+                          fprime = self.i_prime, xtol=1e-9)
 
         
 
