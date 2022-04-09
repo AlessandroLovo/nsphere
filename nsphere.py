@@ -27,6 +27,7 @@ class Handler(object):
     def i(self, x: float) -> float:
         return i_d(x, self.d)/self.i_max
 
+    @np.vectorize
     def get_theta(self, h: float) -> float:
         if h <= 0:
             return 0.
